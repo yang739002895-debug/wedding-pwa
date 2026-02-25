@@ -1,7 +1,7 @@
 {
-  "name": "Wedding Card Generator",
-  "short_name": "WeddingApp",
-  "description": "Generate wedding invitations easily",
+  "name": "好莳威汀水台",
+  "short_name": "婚礼请柬",
+  "description": "婚礼请柬生成器",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -561,10 +561,10 @@
             ctx.drawImage(bgImg, 0, 0, 3840, 2160);
 
             // 2. 获取值，空则不显示
-            const hallTime = elements.timeInput.value.trim();
+            const hallTime = elements.timeInput.value.trim() || "什么厅晚宴";
             const groom = elements.groomInput.value.trim();
             const bride = elements.brideInput.value.trim();
-            const weddingType = elements.typeInput.value.trim();
+            const weddingType = elements.typeInput.value.trim() || "没写宴";
             const textColor = "rgba(120, 65, 25, 1)";
 
             // 1. 基础坐标 (原 X=650, 现在向左移 536 -> 114)
@@ -677,3 +677,4 @@
     </script>
 </body>
 </html>
+

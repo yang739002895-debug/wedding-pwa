@@ -23,7 +23,7 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
         .container {
-            max-width: 800px;
+            max-width: 900px; /* 稍微加宽以容纳左右布局 */
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -32,7 +32,6 @@
             padding-bottom: max(20px, env(safe-area-inset-bottom));
         }
         
-        /* 标题样式 */
         h1 {
             text-align: center;
             font-size: 1.5rem;
@@ -67,8 +66,6 @@
             font-size: 0.95rem;
             flex-shrink: 0;
         }
-        
-        /* 通用输入框 */
         .form-input {
             flex: 1;
             padding: 10px;
@@ -78,7 +75,7 @@
             min-width: 200px;
         }
 
-        /* ✅ 新增：姓名专用输入框组 (缩小宽度 + 加减按钮) */
+        /* 姓名输入组 */
         .name-input-group {
             display: flex;
             align-items: center;
@@ -92,7 +89,7 @@
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 14px;
-            width: 100%; /* 占满剩余空间 */
+            width: 100%;
         }
         .size-btn {
             width: 32px;
@@ -128,7 +125,6 @@
         .btn-warning { background-color: #ffc107; color: black; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         
-        /* 修复选图按钮 */
         .photo-btn-fixed {
             flex: 0 0 auto !important;
             width: auto !important;
@@ -143,6 +139,9 @@
             .form-input, .name-input-group { width: 100%; box-sizing: border-box; }
             .btn { width: 100%; margin-right: 0; }
             .radio-group { flex-direction: column; gap: 8px; }
+            /* 手机端调整框恢复上下排列 */
+            .controls-wrapper { flex-direction: column !important; }
+            .control-group { width: 100% !important; margin-right: 0 !important; margin-bottom: 15px; }
         }
 
         .preview-container {
@@ -161,23 +160,73 @@
         }
         .preview-image { max-width: 100%; height: auto; display: block; }
 
-        /* 控制组通用样式 */
-        .control-group {
+        /* ✅ 新增：左右并排容器 */
+        .controls-wrapper {
+            display: flex;
+            gap: 15px;
             margin: 15px 0;
+        }
+
+        /* ✅ 修改：控制组样式 */
+        .control-group {
+            flex: 1;
             padding: 15px;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             background: #fff;
-            display: none;
+            /* 默认折叠逻辑由 JS 控制内容显示，但容器保持存在 */
         }
-        .control-group h4 {
-            margin-top: 0;
+        
+        /* 标题行布局 */
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0; /* 内容间距由内部控制 */
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .control-title {
+            margin: 0;
             font-size: 1rem;
             color: #444;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
+            font-weight: bold;
         }
+        
+        /* 按钮组 (折叠 + 重置) */
+        .control-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .icon-btn {
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #555;
+            padding: 0;
+            line-height: 1;
+        }
+        .icon-btn:hover { background: #f1f1f1; }
+        .icon-btn.reset-btn { color: #007bff; border-color: #007bff; }
+        
+        /* 内容区域 */
+        .control-content {
+            margin-top: 12px;
+            display: block; /* 默认展开，JS 会控制 display:none */
+            transition: all 0.3s ease;
+        }
+        .control-content.collapsed {
+            display: none;
+        }
+
         .slider-container {
             display: flex;
             align-items: center;
@@ -193,6 +242,7 @@
         .slider-wrapper { flex: 1; margin: 0 10px; }
         input[type=range] { width: 100%; height: 25px; }
 
+        /* ✅ 导出设置折叠样式 */
         .export-options {
             margin: 15px 0;
             padding: 15px;
@@ -200,6 +250,23 @@
             border-radius: 8px;
             background: #fff;
         }
+        .export-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .export-content {
+            margin-top: 12px;
+            display: block;
+        }
+        .export-content.collapsed {
+            display: none;
+        }
+
         .radio-group { display: flex; gap: 15px; margin-top: 8px; flex-wrap: wrap; }
         .radio-item { display: flex; align-items: center; font-size: 0.95rem; }
         .radio-item input { margin-right: 6px; transform: scale(1.2); }
@@ -217,7 +284,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- 5. 标题后加版本号 -->
         <h1>
             好莳威汀水台 
             <span class="version-tag">v1.0</span>
@@ -230,7 +296,6 @@
                 <input type="text" id="timeInput" class="form-input" placeholder="例如：奥斯卡晚宴">
             </div>
             
-            <!-- 4. 缩小输入框 + 加减号 + 6. 修改提示词 -->
             <div class="form-row">
                 <label class="form-label">新郎姓名:</label>
                 <div class="name-input-group">
@@ -266,41 +331,61 @@
             </div>
         </div>
 
-        <!-- 图片裁剪控制 -->
-        <div id="cropControls" class="control-group">
-            <h4>📷 用户图片位置调整</h4>
-            <div class="slider-container">
-                <span class="slider-label">左右</span>
-                <div class="slider-wrapper">
-                    <input type="range" id="hSlider" min="-500" max="500" value="0" step="25">
+        <!-- ✅ 新增：左右并排容器 -->
+        <div class="controls-wrapper">
+            
+            <!-- 1. 图片裁剪控制 (默认折叠) -->
+            <div id="cropControls" class="control-group">
+                <div class="control-header">
+                    <h4 class="control-title">📷 图片位置</h4>
+                    <div class="control-actions">
+                        <!-- 重置按钮 -->
+                        <button class="icon-btn reset-btn" id="resetCropBtn" title="重置位置">🔄</button>
+                        <!-- 折叠按钮 -->
+                        <button class="icon-btn" id="toggleCropBtn" title="展开/折叠">+</button>
+                    </div>
+                </div>
+                <div class="control-content collapsed" id="cropContent">
+                    <div class="slider-container">
+                        <span class="slider-label">左右</span>
+                        <div class="slider-wrapper">
+                            <input type="range" id="hSlider" min="-500" max="500" value="0" step="25">
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <span class="slider-label">上下</span>
+                        <div class="slider-wrapper">
+                            <input type="range" id="vSlider" min="-500" max="500" value="0" step="25">
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="slider-container">
-                <span class="slider-label">上下</span>
-                <div class="slider-wrapper">
-                    <input type="range" id="vSlider" min="-500" max="500" value="0" step="25">
-                </div>
-            </div>
-        </div>
 
-        <!-- 4. 新增：新郎新娘位置与大小控制 -->
-        <div id="nameControls" class="control-group">
-            <h4>✍️ 新人姓名位置调整</h4>
-            <div class="slider-container">
-                <span class="slider-label">左右</span>
-                <div class="slider-wrapper">
-                    <input type="range" id="nameHSlider" min="-1000" max="1000" value="0" step="10">
+            <!-- 2. 新人姓名控制 (默认折叠) -->
+            <div id="nameControls" class="control-group" style="display:none;"> <!-- 初始隐藏整个框，有名字时显示 -->
+                <div class="control-header">
+                    <h4 class="control-title">✍️ 姓名位置</h4>
+                    <div class="control-actions">
+                        <button class="icon-btn reset-btn" id="resetNameBtn" title="重置位置">🔄</button>
+                        <button class="icon-btn" id="toggleNameBtn" title="展开/折叠">+</button>
+                    </div>
+                </div>
+                <div class="control-content collapsed" id="nameContent">
+                    <div class="slider-container">
+                        <span class="slider-label">左右</span>
+                        <div class="slider-wrapper">
+                            <input type="range" id="nameHSlider" min="-1000" max="1000" value="0" step="10">
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <span class="slider-label">上下</span>
+                        <div class="slider-wrapper">
+                            <input type="range" id="nameVSlider" min="-1000" max="1000" value="0" step="10">
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="slider-container">
-                <span class="slider-label">上下</span>
-                <div class="slider-wrapper">
-                    <input type="range" id="nameVSlider" min="-1000" max="1000" value="0" step="10">
-                </div>
-            </div>
-            <div style="text-align: center; font-size: 0.8rem; color: #999; margin-top:5px;">
-                拖动滑块调整两人姓名的整体位置
-            </div>
+
         </div>
 
         <!-- 预览区域 -->
@@ -313,29 +398,34 @@
             <button id="refreshBtn" class="btn btn-warning">🔄 刷新预览</button>
         </div>
 
-        <!-- 导出设置 -->
+        <!-- 3. 导出设置 (默认折叠，保留标题) -->
         <div class="export-options">
-            <h3 style="font-size: 1rem; margin-top:0; color:#444;">导出设置</h3>
-            <div class="form-row" style="flex-direction: column; align-items: flex-start;">
-                <label style="font-weight:bold; font-size:0.9rem;">分辨率:</label>
-                <div class="radio-group">
-                    <label class="radio-item">
-                        <input type="radio" name="resolution" id="res4k" value="4k" checked> 4K (3840×2160)
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="resolution" id="res1k" value="1k"> 1080P
-                    </label>
-                </div>
+            <div class="export-header">
+                <h3 style="font-size: 1rem; margin:0; color:#444;">导出设置</h3>
+                <button class="icon-btn" id="toggleExportBtn" title="展开/折叠">+</button>
             </div>
-            <div class="form-row" style="flex-direction: column; align-items: flex-start; margin-top:10px;">
-                <label style="font-weight:bold; font-size:0.9rem;">格式:</label>
-                <div class="radio-group">
-                    <label class="radio-item">
-                        <input type="radio" name="format" id="fmtJpg" value="jpg" checked> JPG
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="format" id="fmtPng" value="png"> PNG
-                    </label>
+            <div class="export-content collapsed" id="exportContent">
+                <div class="form-row" style="flex-direction: column; align-items: flex-start; margin-top:10px;">
+                    <label style="font-weight:bold; font-size:0.9rem;">分辨率:</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="resolution" id="res4k" value="4k" checked> 4K (3840×2160)
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="resolution" id="res1k" value="1k"> 1080P
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row" style="flex-direction: column; align-items: flex-start; margin-top:10px;">
+                    <label style="font-weight:bold; font-size:0.9rem;">格式:</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="format" id="fmtJpg" value="jpg" checked> JPG
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="format" id="fmtPng" value="png"> PNG
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -360,18 +450,15 @@
         // ================= 配置区 =================
         const BACKGROUND_URL = "./back.png"; 
         const FONT_URL = "./FZXiaoBiaoSong-B05S.woff2";
-        const BASE_FONT_SIZE = 192; // 基础字号
+        const BASE_FONT_SIZE = 192;
         
-        // 状态变量
         let userImageBase64 = null;
         let cropOffsetX = 0;
         let cropOffsetY = 0;
-        
-        // 姓名控制变量
         let nameOffsetX = 0;
         let nameOffsetY = 0;
-        let groomScale = 100; // 百分比
-        let brideScale = 100; // 百分比
+        let groomScale = 100;
+        let brideScale = 100;
 
         let customFontFamily = 'serif';
         let resourcesLoaded = false;
@@ -385,20 +472,25 @@
             photoBtn: document.getElementById('photoBtn'),
             photoFile: document.getElementById('photoFile'),
             photoInfo: document.getElementById('photoInfo'),
+            
+            // 控制组
             cropControls: document.getElementById('cropControls'),
+            cropContent: document.getElementById('cropContent'),
+            toggleCropBtn: document.getElementById('toggleCropBtn'),
+            resetCropBtn: document.getElementById('resetCropBtn'),
             hSlider: document.getElementById('hSlider'),
             vSlider: document.getElementById('vSlider'),
-            
-            // 姓名控制
+
             nameControls: document.getElementById('nameControls'),
+            nameContent: document.getElementById('nameContent'),
+            toggleNameBtn: document.getElementById('toggleNameBtn'),
+            resetNameBtn: document.getElementById('resetNameBtn'),
             nameHSlider: document.getElementById('nameHSlider'),
             nameVSlider: document.getElementById('nameVSlider'),
-            groomMinus: document.getElementById('groomMinus'),
-            groomPlus: document.getElementById('groomPlus'),
-            groomSizeDisplay: document.getElementById('groomSizeDisplay'),
-            brideMinus: document.getElementById('brideMinus'),
-            bridePlus: document.getElementById('bridePlus'),
-            brideSizeDisplay: document.getElementById('brideSizeDisplay'),
+
+            // 导出
+            toggleExportBtn: document.getElementById('toggleExportBtn'),
+            exportContent: document.getElementById('exportContent'),
 
             previewCanvas: document.getElementById('previewCanvas'),
             refreshBtn: document.getElementById('refreshBtn'),
@@ -407,10 +499,57 @@
             fmtJpg: document.getElementById('fmtJpg'),
             fmtPng: document.getElementById('fmtPng'),
             generateBtn: document.getElementById('generateBtn'),
-            loadingMsg: document.getElementById('loadingMsg')
+            loadingMsg: document.getElementById('loadingMsg'),
+            
+            // 大小按钮
+            groomMinus: document.getElementById('groomMinus'),
+            groomPlus: document.getElementById('groomPlus'),
+            groomSizeDisplay: document.getElementById('groomSizeDisplay'),
+            brideMinus: document.getElementById('brideMinus'),
+            bridePlus: document.getElementById('bridePlus'),
+            brideSizeDisplay: document.getElementById('brideSizeDisplay')
         };
 
-        // 加载字体
+        // 初始化折叠/展开逻辑
+        function initCollapsibles() {
+            // 1. 图片控制
+            elements.toggleCropBtn.addEventListener('click', () => {
+                const isCollapsed = elements.cropContent.classList.contains('collapsed');
+                elements.cropContent.classList.toggle('collapsed');
+                elements.toggleCropBtn.textContent = isCollapsed ? '−' : '+';
+            });
+            // 重置图片
+            elements.resetCropBtn.addEventListener('click', () => {
+                elements.hSlider.value = 0;
+                elements.vSlider.value = 0;
+                cropOffsetX = 0;
+                cropOffsetY = 0;
+                updatePreview();
+            });
+
+            // 2. 姓名控制
+            elements.toggleNameBtn.addEventListener('click', () => {
+                const isCollapsed = elements.nameContent.classList.contains('collapsed');
+                elements.nameContent.classList.toggle('collapsed');
+                elements.toggleNameBtn.textContent = isCollapsed ? '−' : '+';
+            });
+            // 重置姓名
+            elements.resetNameBtn.addEventListener('click', () => {
+                elements.nameHSlider.value = 0;
+                elements.nameVSlider.value = 0;
+                nameOffsetX = 0;
+                nameOffsetY = 0;
+                updatePreview();
+            });
+
+            // 3. 导出设置
+            elements.toggleExportBtn.addEventListener('click', () => {
+                const isCollapsed = elements.exportContent.classList.contains('collapsed');
+                elements.exportContent.classList.toggle('collapsed');
+                elements.toggleExportBtn.textContent = isCollapsed ? '−' : '+';
+            });
+        }
+
         async function loadCustomFont() {
             if (!FONT_URL) return 'serif';
             const fontName = 'FZXiaoBiaoSong';
@@ -423,7 +562,6 @@
             } catch (e) { return 'serif'; }
         }
 
-        // 预加载
         async function preloadResources() {
             elements.loadingMsg.style.display = 'block';
             try {
@@ -442,20 +580,17 @@
             }
         }
 
-        // 初始化事件
         function initEventListeners() {
+            initCollapsibles(); // 初始化折叠逻辑
+
             elements.photoBtn.addEventListener('click', () => elements.photoFile.click());
             elements.photoFile.addEventListener('change', handlePhotoUpload);
             
-            // 图片滑块
             elements.hSlider.addEventListener('input', (e) => { cropOffsetX = parseInt(e.target.value); updatePreview(); });
             elements.vSlider.addEventListener('input', (e) => { cropOffsetY = parseInt(e.target.value); updatePreview(); });
-
-            // 姓名滑块
             elements.nameHSlider.addEventListener('input', (e) => { nameOffsetX = parseInt(e.target.value); updatePreview(); });
             elements.nameVSlider.addEventListener('input', (e) => { nameOffsetY = parseInt(e.target.value); updatePreview(); });
 
-            // 4. 加减号事件
             elements.groomPlus.addEventListener('click', () => { groomScale = Math.min(groomScale + 10, 300); updateSizeUI(); updatePreview(); });
             elements.groomMinus.addEventListener('click', () => { groomScale = Math.max(groomScale - 10, 20); updateSizeUI(); updatePreview(); });
             elements.bridePlus.addEventListener('click', () => { brideScale = Math.min(brideScale + 10, 300); updateSizeUI(); updatePreview(); });
@@ -481,7 +616,6 @@
             reader.onload = function(e) {
                 userImageBase64 = e.target.result;
                 elements.photoInfo.textContent = file.name.length > 15 ? file.name.substring(0, 15) + '...' : file.name;
-                elements.cropControls.style.display = 'block';
                 checkNameControls();
                 updatePreview();
             };
@@ -489,13 +623,9 @@
         }
 
         function checkNameControls() {
-            const hasGroom = elements.groomInput.value.trim();
-            const hasBride = elements.brideInput.value.trim();
-            if (hasGroom || hasBride) {
-                elements.nameControls.style.display = 'block';
-            } else {
-                elements.nameControls.style.display = 'none';
-            }
+            const hasName = elements.groomInput.value.trim() || elements.brideInput.value.trim();
+            // 如果有名字，显示整个控制框，否则隐藏
+            elements.nameControls.style.display = hasName ? 'block' : 'none';
         }
 
         function getResolution() {
@@ -560,35 +690,33 @@
             await new Promise((resolve, reject) => { bgImg.onload = resolve; bgImg.onerror = reject; });
             ctx.drawImage(bgImg, 0, 0, 3840, 2160);
 
-            // 2. 获取值，空则不显示
+            // 获取值 (带默认值)
             const hallTime = elements.timeInput.value.trim() || "什么厅晚宴";
             const groom = elements.groomInput.value.trim();
             const bride = elements.brideInput.value.trim();
-            const weddingType = elements.typeInput.value.trim() || "没写宴";
+            const weddingType = elements.typeInput.value.trim() || "没写宴席";
             const textColor = "rgba(120, 65, 25, 1)";
 
-            // 1. 基础坐标 (原 X=650, 现在向左移 536 -> 114)
+            // 坐标计算 (左移 536)
             const baseX = 650 - 536; 
             const baseGroomY = 1110 + 158;
             const baseBrideY = 1380 + 158;
             const baseTimeX = 280, baseTimeY = 490 + 148;
             const baseTypeX = 3100, baseTypeY = 100 + 167;
 
-            // 应用滑块偏移
             const finalX = baseX + nameOffsetX;
             let finalGroomY = baseGroomY + nameOffsetY;
             let finalBrideY = baseBrideY + nameOffsetY;
 
-            // 3. 单人行逻辑：有新郎无新娘，新郎下移 120
+            // 单人行逻辑
             if (groom && !bride) {
                 finalGroomY += 120;
             }
 
-            // 绘制其他文字
-            if (hallTime) drawBoldText(ctx, baseTimeX, baseTimeY, hallTime, loadFont(166), textColor);
-            if (weddingType) drawText(ctx, baseTypeX, baseTypeY, weddingType, loadFont(220), textColor);
+            // 绘制
+            drawBoldText(ctx, baseTimeX, baseTimeY, hallTime, loadFont(166), textColor);
+            drawText(ctx, baseTypeX, baseTypeY, weddingType, loadFont(220), textColor);
 
-            // 绘制姓名 (带缩放)
             if (groom) {
                 const size = BASE_FONT_SIZE * (groomScale / 100);
                 drawText(ctx, finalX, finalGroomY, groom, loadFont(size), textColor);
@@ -677,4 +805,3 @@
     </script>
 </body>
 </html>
-

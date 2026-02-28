@@ -674,7 +674,7 @@
                     const realName = name.substring(prefix.length);
                     // 如果冒号后正好是2个字，则在中间加一个全角空格
                     if (realName.length === 2) {
-                        return prefix + realName[0] + " " + realName[1];
+                        return prefix + realName[0] + "\u3000\u3000" + realName[1];
                     }
                 }
             }
@@ -821,3 +821,4 @@
     </script>
 </body>
 </html>
+
